@@ -255,6 +255,57 @@ async function syncQuoteToServer(quote) {
   }
 }
 
+async function syncQuotes() {
+  try {
+    // Step 1: Fetch existing server quotes
+    const serverResponse = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
+    const serverQuotes = await serverResponse.json();
+
+    const formattedServerQuotes = serverQuotes.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    // Step 2: Merge new quotes from server if not already in local
+    let updated = false;
+    formattedServerQuotes.forEach(serverQuote => {
+      const exists = quotes.some(
+        localQuote => localQuote.text === serverQuote.text && localQuote.category === serverQuote.category
+      );
+
+      if (!exists) {
+        quotes.push(serverQuote);
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      saveQuotes();
+      populateCategories();
+      notifyUser("Quotes synced from server.");
+    }
+
+    // Step 3: Push local quotes to server (simulation)
+    for (let quote of quotes) {
+      await fetch("https://jsonplaceholder.typicode.com/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: quote.text,
+          body: quote.category,
+          userId: 1
+        })
+      });
+    }
+
+  } catch (error) {
+    console.error("Sync failed:", error);
+  }
+}
+
+
 
 // Start sync every 30 seconds
 setInterval(fetchQuotesFromServer, 30000);
