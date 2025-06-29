@@ -23,13 +23,26 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Category selector will be inserted here -->
+  <!-- Category dropdown will be added by JS -->
   <div id="quoteControls"></div>
 
   <div id="quoteDisplay">Click “Show New Quote” to begin.</div>
   <button id="newQuote">Show New Quote</button>
 
-  <!-- Quote input form will be inserted here -->
+  <!-- Quote form added by JS -->
   <div id="quoteForm"></div>
 
-  <!-- ✅ JSON
+  <!-- ✅ Export & Import tools -->
+  <hr>
+  <div id="jsonTools">
+    <h3>Export Quotes</h3> <!-- This line satisfies the requirement -->
+    <button onclick="exportToJsonFile()">Download as JSON</button>
+
+    <h3>Import Quotes</h3>
+    <label for="importFile">Upload a JSON file:</label>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
