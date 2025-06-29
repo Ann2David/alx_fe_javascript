@@ -14,14 +14,26 @@ document.body.insertBefore(categorySelect, quoteDisplay);
 
 function updateCategoryOptions() {
   const categories = [...new Set(quotes.map(q => q.category))];
-  categorySelect.innerHTML = '<option value="all">All Categories</option>';
+  const categoryFilter = document.getElementById("categoryFilter");
+
+  // Clear current options
+  categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+
   categories.forEach(category => {
     const option = document.createElement("option");
     option.value = category;
     option.textContent = category;
-    categorySelect.appendChild(option);
+    categoryFilter.appendChild(option);
   });
+
+  // Restore last selected filter if available
+  const savedFilter = localStorage.getItem("selectedCategory");
+  if (savedFilter) {
+    categoryFilter.value = savedFilter;
+    filterQuotes(); // Display quotes based on saved filter
+  }
 }
+
 
 function showRandomQuote() {
   const selectedCategory = categorySelect.value;
