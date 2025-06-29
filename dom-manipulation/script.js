@@ -69,14 +69,19 @@ function addQuote() {
     return;
   }
 
-  quotes.push({ text, category });
+  const newQuote = { text, category };
+  quotes.push(newQuote);
   saveQuotes();
-  updateCategoryOptions();
-  showRandomQuote();
+  populateCategories();
+  filterQuotes();
 
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
+
+  // ✅ Post to server
+  syncQuoteToServer(newQuote);
 }
+
 
 function createAddQuoteForm() {
   const formContainer = document.createElement("div");
@@ -228,6 +233,28 @@ function notifyUser(message) {
     note.textContent = "";
   }, 4000);
 }
+
+async function syncQuoteToServer(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: quote.text,
+        body: quote.category,
+        userId: 1
+      })
+    });
+
+    const data = await response.json();
+    console.log("Quote synced to server:", data);
+  } catch (error) {
+    console.error("Failed to sync quote:", error);
+  }
+}
+
 
 // Start sync every 30 seconds
 setInterval(fetchQuotesFromServer, 30000);
