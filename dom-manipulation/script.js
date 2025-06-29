@@ -282,7 +282,8 @@ async function syncQuotes() {
     if (updated) {
       saveQuotes();
       populateCategories();
-      notifyUser("Quotes synced from server.");
+      notifyUser("Quotes synced with server!");
+
     }
 
     // Step 3: Push local quotes to server (simulation)
