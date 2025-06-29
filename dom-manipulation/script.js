@@ -12,11 +12,10 @@ const categorySelect = document.createElement("select");
 categorySelect.id = "categorySelect";
 document.body.insertBefore(categorySelect, quoteDisplay);
 
-function updateCategoryOptions() {
+function populateCategories() {
   const categories = [...new Set(quotes.map(q => q.category))];
   const categoryFilter = document.getElementById("categoryFilter");
 
-  // Clear current options
   categoryFilter.innerHTML = '<option value="all">All Categories</option>';
 
   categories.forEach(category => {
@@ -25,6 +24,15 @@ function updateCategoryOptions() {
     option.textContent = category;
     categoryFilter.appendChild(option);
   });
+
+  // Load saved filter
+  const savedFilter = localStorage.getItem("selectedCategory");
+  if (savedFilter) {
+    categoryFilter.value = savedFilter;
+    filterQuotes();
+  }
+}
+
 
   // Restore last selected filter if available
   const savedFilter = localStorage.getItem("selectedCategory");
