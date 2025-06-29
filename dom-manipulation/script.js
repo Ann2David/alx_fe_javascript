@@ -181,3 +181,54 @@ if (lastViewed) {
 }
 
 newQuoteBtn.addEventListener("click", showRandomQuote);
+
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
+    const serverData = await response.json();
+
+    // Simulate quote format
+    const serverQuotes = serverData.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    handleServerSync(serverQuotes);
+  } catch (error) {
+    console.error("Failed to fetch from server:", error);
+  }
+}
+
+function handleServerSync(serverQuotes) {
+  let updated = false;
+
+  serverQuotes.forEach(serverQuote => {
+    const exists = quotes.some(
+      localQuote => localQuote.text === serverQuote.text && localQuote.category === serverQuote.category
+    );
+
+    if (!exists) {
+      quotes.push(serverQuote);
+      updated = true;
+    }
+  });
+
+  if (updated) {
+    saveQuotes();
+    populateCategories();
+    notifyUser("New quotes synced from server.");
+  }
+}
+
+function notifyUser(message) {
+  const note = document.getElementById("notification");
+  note.textContent = message;
+
+  setTimeout(() => {
+    note.textContent = "";
+  }, 4000);
+}
+
+// Start sync every 30 seconds
+setInterval(fetchQuotesFromServer, 30000);
+
